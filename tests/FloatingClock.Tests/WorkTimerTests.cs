@@ -118,6 +118,83 @@ public class WorkTimerTests
         Assert.False(timer.ReminderDue(0));
     }
 
+    [Fact]
+    public void Set_elapsed_while_running_counts_on_from_the_new_value()
+    {
+        var timer = new WorkTimer(clock);
+        timer.Toggle();
+        clock.Advance(new TimeSpan(0, 10, 37));
+
+        timer.SetElapsed(TimeSpan.FromHours(2));
+        clock.Advance(TimeSpan.FromMinutes(1));
+
+        Assert.True(timer.IsRunning);
+        Assert.Equal(new TimeSpan(2, 1, 0), timer.Elapsed);
+    }
+
+    [Fact]
+    public void Set_elapsed_while_stopped_stays_stopped()
+    {
+        var timer = new WorkTimer(clock, TimeSpan.FromMinutes(10));
+
+        timer.SetElapsed(new TimeSpan(1, 30, 0));
+        clock.Advance(TimeSpan.FromHours(1));
+
+        Assert.False(timer.IsRunning);
+        Assert.Equal(new TimeSpan(1, 30, 0), timer.Elapsed);
+    }
+
+    [Fact]
+    public void Setting_past_the_reminder_does_not_notify_but_setting_below_rearms_it()
+    {
+        var timer = new WorkTimer(clock, TimeSpan.FromHours(7));
+        timer.Toggle();
+
+        timer.SetElapsed(TimeSpan.FromHours(9));
+        Assert.False(timer.ReminderDue(8));
+
+        timer.SetElapsed(new TimeSpan(7, 59, 0));
+        Assert.False(timer.ReminderDue(8));
+        clock.Advance(TimeSpan.FromMinutes(1));
+        Assert.True(timer.ReminderDue(8));
+    }
+
+    [Theory]
+    [InlineData("2:00", 2, 0)]
+    [InlineData("10:30", 10, 30)]
+    [InlineData("0:00", 0, 0)]
+    [InlineData("02:00", 2, 0)]
+    [InlineData("123:05", 123, 5)]
+    [InlineData(" 2:00 ", 2, 0)]
+    public void Parse_accepts_h_mm(string input, int hours, int minutes)
+    {
+        Assert.Equal(new TimeSpan(hours, minutes, 0), WorkTimer.ParseHoursMinutes(input));
+    }
+
+    [Fact]
+    public void Prefill_from_the_hh_mm_format_parses_back()
+    {
+        var elapsed = new TimeSpan(123, 5, 0);
+
+        Assert.Equal(elapsed, WorkTimer.ParseHoursMinutes(WorkTimer.Format(elapsed, ClockFormat.HoursMinutes)));
+    }
+
+    [Theory]
+    [InlineData("2h")]
+    [InlineData("1:75")]
+    [InlineData("2:5")]
+    [InlineData("2:005")]
+    [InlineData("-1:00")]
+    [InlineData(":30")]
+    [InlineData("2")]
+    [InlineData("2:00:00")]
+    [InlineData("")]
+    [InlineData("9999999:00")]
+    public void Parse_rejects_anything_else(string input)
+    {
+        Assert.Null(WorkTimer.ParseHoursMinutes(input));
+    }
+
     [Theory]
     [InlineData(0, 0, 0, ClockFormat.HoursMinutesSeconds, "00:00:00")]
     [InlineData(3, 12, 5, ClockFormat.HoursMinutesSeconds, "03:12:05")]

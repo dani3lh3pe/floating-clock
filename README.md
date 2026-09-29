@@ -13,7 +13,8 @@ on screen: no title bar, no border, no taskbar button. It can stay on top of eve
 | Everything else | Right-click the clock or the tray icon |
 | Hide / show | Left-click the tray icon |
 
-The menu has Reset, Always on top, text/background/reminder colour, background opacity
+The menu has Reset, Set time (correct the elapsed time as `h:mm`, e.g. when you started late),
+Always on top, text/background/reminder colour, background opacity
 (0 % = transparent), font, format (`hh:mm:ss` or `hh:mm`), the reminder (off or 6–10 h,
 default 8 h) and Quit.
 

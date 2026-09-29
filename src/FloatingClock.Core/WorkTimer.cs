@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace FloatingClock.Core;
 
 public enum ClockFormat { HoursMinutesSeconds, HoursMinutes }
@@ -46,9 +48,25 @@ public sealed class WorkTimer
 
     public void Reset()
     {
-        Accumulated = TimeSpan.Zero;
         StartedAtUtc = null;
-        lastReminderCheck = TimeSpan.Zero;
+        SetElapsed(TimeSpan.Zero);
+    }
+
+    /// <summary>Corrects the shown time. Running or stopped is unchanged; jumping past the
+    /// reminder threshold only colours the digits, like an app start.</summary>
+    public void SetElapsed(TimeSpan elapsed)
+    {
+        Accumulated = elapsed;
+        if (IsRunning) StartedAtUtc = clock.GetUtcNow();
+        lastReminderCheck = elapsed;
+    }
+
+    /// <summary>Parses <c>h:mm</c>: hours unbounded in practice, minutes exactly 00–59; null if invalid.</summary>
+    public static TimeSpan? ParseHoursMinutes(string input)
+    {
+        // ponytail: 6 hour digits (114 years) only keeps int/TimeSpan from overflowing.
+        var match = Regex.Match(input.Trim(), "^([0-9]{1,6}):([0-5][0-9])$");
+        return match.Success ? new TimeSpan(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value), 0) : null;
     }
 
     public static bool IsPastReminder(TimeSpan elapsed, int reminderHours) =>

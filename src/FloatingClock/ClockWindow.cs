@@ -9,6 +9,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using FloatingClock.Core;
+using Microsoft.VisualBasic;
 using Drawing = System.Drawing;
 using Forms = System.Windows.Forms;
 
@@ -136,6 +137,28 @@ sealed class ClockWindow : Window
         Tick();
     }
 
+    void SetTime()
+    {
+        var prompt = "Elapsed time (h:mm):";
+        var prefill = WorkTimer.Format(timer.Elapsed, ClockFormat.HoursMinutes);
+        var input = prefill;
+        Activate(); // InputBox takes the active window as owner: modal to the clock and above it
+        while (true)
+        {
+            input = Interaction.InputBox(prompt, "Set time", input);
+            // Cancel, empty, or OK on the prefill (which is cut to minutes): unchanged
+            if (string.IsNullOrWhiteSpace(input) || input.Trim() == prefill) return;
+            if (WorkTimer.ParseHoursMinutes(input) is { } elapsed)
+            {
+                timer.SetElapsed(elapsed);
+                Save();
+                Tick();
+                return;
+            }
+            prompt = "Use h:mm, e.g. 2:15";
+        }
+    }
+
     void ToggleVisible()
     {
         if (IsVisible) Hide();
@@ -150,6 +173,7 @@ sealed class ClockWindow : Window
         {
             startStop,
             new Forms.ToolStripMenuItem("Reset", null, (_, _) => ResetTimer()),
+            new Forms.ToolStripMenuItem("Set time…", null, (_, _) => SetTime()),
             alwaysOnTop,
             new Forms.ToolStripSeparator(),
             ColorItem("Text colour…", () => settings.TextColor, c => settings with { TextColor = c }),
