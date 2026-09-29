@@ -27,9 +27,13 @@ to start over. To start the clock with Windows, put a shortcut to the exe in `sh
 
 ## Install
 
-Download `FloatingClock.exe` and run it. It is a single portable file with .NET included; nothing
-to install. Builds are not code-signed, so SmartScreen may warn on first start, and managed
-machines with Defender ASR may block a new version for a few hours.
+Requires Windows 10 or 11, x64 (on ARM it runs emulated).
+
+Download `FloatingClock.exe` from the [latest release](https://github.com/dani3lh3pe/floating-clock/releases/latest)
+and run it. It is a single portable file with .NET included; nothing to install.
+
+Builds are not code-signed. SmartScreen may warn on first start: choose **More info → Run
+anyway**. Managed machines with Defender ASR may block a new version for a few hours.
 
 ## Build
 

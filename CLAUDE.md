@@ -5,13 +5,17 @@ I have been working.
 
 ## Stack and commands
 
-.NET 10 (SDK in `~/.dotnet`, put it on `PATH`) · WPF plus WinForms `NotifyIcon`/`ColorDialog`/
+.NET 10 (on the Linux dev machine the SDK is in `~/.dotnet`, not on `PATH`) · WPF plus WinForms `NotifyIcon`/`ColorDialog`/
 `FontDialog` ([ADR 0002](docs/adr/0002-wpf-with-winforms-interop-on-net10.md)) · xUnit.
 
 ```sh
 dotnet test                                                # Core tests, run on Linux
 dotnet publish src/FloatingClock -c Release -o publish     # one self-contained win-x64 exe
+git tag vX.Y.Z && git push origin vX.Y.Z                   # CI tests, builds, publishes the release
 ```
+
+The release version comes from the tag (`.github/workflows/release.yml`); the `<Version>` in the
+csproj is only the fallback for local builds.
 
 ## Architecture
 

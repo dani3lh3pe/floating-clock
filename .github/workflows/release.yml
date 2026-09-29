@@ -1,0 +1,24 @@
+# Push a tag like v0.2.0 → test, build the exe, publish it as a GitHub release.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    # Linux builds the Windows exe via EnableWindowsTargeting (ADR 0002), same as local dev.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet test
+      - run: dotnet publish src/FloatingClock -c Release -o publish -p:Version=${GITHUB_REF_NAME#v}
+      - run: gh release create "$GITHUB_REF_NAME" publish/FloatingClock.exe --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
