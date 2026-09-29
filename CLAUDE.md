@@ -1,8 +1,30 @@
 # CLAUDE.md
 
 Floating Clock: a minimal, chromeless, always-on-top stopwatch for Windows that shows how long
-I have been working. Stack, commands and architecture are decided in the first grilling session
-and added here afterwards.
+I have been working.
+
+## Stack and commands
+
+.NET 10 (SDK in `~/.dotnet`, put it on `PATH`) · WPF plus WinForms `NotifyIcon`/`ColorDialog`/
+`FontDialog` ([ADR 0002](docs/adr/0002-wpf-with-winforms-interop-on-net10.md)) · xUnit.
+
+```sh
+dotnet test                                                # Core tests, run on Linux
+dotnet publish src/FloatingClock -c Release -o publish     # one self-contained win-x64 exe
+```
+
+## Architecture
+
+```text
+src/FloatingClock.Core  →  timer, formatting, reminder, settings file   (net10.0, no UI deps)
+src/FloatingClock       →  the WPF window, tray, menu, dialogs           (net10.0-windows)
+tests/FloatingClock.Tests → xUnit, tests Core only
+```
+
+`Core` must not reference WPF or WinForms: that is what keeps the tests runnable on Linux. The app
+cannot run on Linux, so anything visual is checked by hand on Windows. Elapsed time is wall-clock
+based and persisted ([ADR 0001](docs/adr/0001-elapsed-time-from-persisted-utc-start.md)); do not
+switch it to `Stopwatch`.
 
 ## Workflow
 

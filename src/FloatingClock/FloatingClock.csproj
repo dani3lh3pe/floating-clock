@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- ADR 0002: WPF window plus WinForms tray and dialogs, built on Linux. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <Nullable>enable</Nullable>
+    <Product>Floating Clock</Product>
+    <Version>0.1.0</Version>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- WFO0003 wants DPI mode set via the WinForms API; WPF needs it in the manifest. -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+
+    <!-- One portable exe that needs no .NET install. WPF cannot be trimmed, hence ~70 MB. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="app.ico" LogicalName="app.ico" />
+    <ProjectReference Include="..\FloatingClock.Core\FloatingClock.Core.csproj" />
+  </ItemGroup>
+
+</Project>

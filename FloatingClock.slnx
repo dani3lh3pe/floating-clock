@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FloatingClock.Core/FloatingClock.Core.csproj" />
+    <Project Path="src/FloatingClock/FloatingClock.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FloatingClock.Tests/FloatingClock.Tests.csproj" />
+  </Folder>
+</Solution>

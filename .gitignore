@@ -1,2 +1,5 @@
 # Per-feature working material (specs); durable decisions live in docs/adr/
 .scratch/
+bin/
+obj/
+publish/
