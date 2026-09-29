@@ -31,5 +31,6 @@ switch it to `Stopwatch`.
 - New feature: `grilling` → `spec` → implement → spec-check → `/ponytail-review` → `/code-review`
   → commit. Bug fixes and small, fully specified changes skip grilling and spec.
 - Decisions that are hard to reverse, surprising, and a real trade-off go to `docs/adr/`
-  (rules and format: the ADR section of `.claude/skills/grilling/SKILL.md`).
+  (rules and format: the ADR section of the `grilling` skill). Deferred feature ideas go to
+  `docs/backlog.md`.
 - All files (code, comments, ADRs, specs) are English.
